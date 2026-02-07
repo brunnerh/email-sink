@@ -1,0 +1,8 @@
+@layer theme, base, components, utilities;
+
+@layer theme {
+	@import 'carbon-components-svelte/css/all.css';
+	@import 'tailwindcss/theme.css';
+}
+
+@import 'tailwindcss/utilities.css' layer(utilities);

@@ -1,0 +1,80 @@
+:root {
+	/* Alias support colors */
+	--cds-support-red: var(--cds-support-01);
+	--cds-support-green: var(--cds-support-02);
+	--cds-support-yellow: var(--cds-support-03);
+	--cds-support-blue: var(--cds-support-04);
+	--cds-inverse-support-red: var(--cds-inverse-support-01);
+	--cds-inverse-support-green: var(--cds-inverse-support-02);
+	--cds-inverse-support-yellow: var(--cds-inverse-support-03);
+	--cds-inverse-support-blue: var(--cds-inverse-support-04);
+
+	color-scheme: light;
+
+	&[theme='g90'] {
+		color-scheme: dark;
+	}
+}
+
+/* #region Dark Side Nav (pre Carbon v11) */
+
+[theme='g90'] {
+	.bx--side-nav {
+		background: var(--cds-ui-background);
+		color: var(--cds-text-01);
+		border-right: 1px solid var(--cds-border-subtle);
+	}
+
+	a.bx--side-nav__link {
+		background: none;
+	}
+	.bx--side-nav__icon > svg {
+		fill: var(--cds-text-02);
+	}
+	.bx--side-nav__submenu,
+	a.bx--side-nav__link > .bx--side-nav__link-text,
+	.bx--side-nav a.bx--header__menu-item .bx--text-truncate-end {
+		color: var(--cds-text-02);
+	}
+	a.bx--side-nav__link[aria-current='page'], a.bx--side-nav__link--current {
+		background: var(--cds-ui-01);
+
+		.bx--side-nav__icon > svg {
+			fill: var(--cds-text-01);
+		}
+		.bx--side-nav__link-text {
+			color: var(--cds-text-01);
+		}
+
+		&::before {
+			background-color: var(--cds-interactive-04);
+		}
+	}
+
+	.bx--side-nav__submenu:hover,
+	.bx--side-nav__item:not(.bx--side-nav__item--active):hover
+		.bx--side-nav__item:not(.bx--side-nav__item--active)
+		> .bx--side-nav__submenu:hover,
+	.bx--side-nav__item:not(.bx--side-nav__item--active)
+		> .bx--side-nav__link:hover,
+	.bx--side-nav__menu
+		a.bx--side-nav__link:not(.bx--side-nav__link--current):not(
+			[aria-current='page']
+		):hover,
+	.bx--side-nav a.bx--header__menu-item:hover,
+	.bx--side-nav .bx--header__menu-title[aria-expanded='true']:hover {
+		background: var(--cds-ui-02);
+		color: var(--cds-text-01);
+	}
+	.bx--side-nav__item:not(.bx--side-nav__item--active)
+		> .bx--side-nav__link:hover
+		> span,
+	.bx--side-nav__item:not(.bx--side-nav__item--active)
+		.bx--side-nav__menu-item
+		> .bx--side-nav__link:hover
+		> span {
+		color: var(--cds-text-01);
+	}
+}
+
+/* #endregion */
