@@ -11,9 +11,7 @@ exists.
 - For type checking use the script `check`.
 - For testing use the script `test`.
 - Always run checks and tests after making any significant changes.
-- Format the project using the script `format`.\
-  Important: If a file is listed in the output, you should re-read the file
-  before applying follow up patches to it, otherwise the patch might fail.
+- Do not auto-format the code.
 
 ## Styling
 

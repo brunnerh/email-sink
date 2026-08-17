@@ -5,7 +5,7 @@ import { requireNone } from '$lib/server/auth/guards';
 import { and, eq, gt, isNull } from 'drizzle-orm';
 import { resolve as resolvePath } from '$app/paths';
 import { redirect } from '@sveltejs/kit';
-import type { ServerLoad } from '@sveltejs/kit';
+import type { Actions, ServerLoad } from '@sveltejs/kit';
 
 export const load: ServerLoad = async ({ locals, url }) => {
 	requireNone();
@@ -25,7 +25,49 @@ export const load: ServerLoad = async ({ locals, url }) => {
 	if (!keyRow)
 		throw redirect(303, resolvePath('/login'));
 
-	await db.transaction(async (tx) => {
+	if (locals.sessionId === keyRow.sessionId) {
+		if (await consumeLoginKey(key))
+			throw redirect(303, resolvePath('/'));
+
+		throw redirect(303, resolvePath('/login'));
+	}
+
+	return { key };
+};
+
+export const actions: Actions = {
+	default: async ({ request }) => {
+		requireNone();
+		const formData = await request.formData();
+		const key = formData.get('key');
+		if (typeof key !== 'string' || !(await consumeLoginKey(key)))
+			throw redirect(303, resolvePath('/login'));
+
+		throw redirect(303, resolvePath('/login/verify/confirmed'));
+	},
+};
+
+async function consumeLoginKey(key: string) {
+	const keyHash = hashLoginKey(key);
+	const now = new Date();
+
+	const [keyRow] = await db.select().from(loginKey).where(and(
+		eq(loginKey.keyHash, keyHash),
+		gt(loginKey.expiresAt, now),
+		isNull(loginKey.usedAt),
+	)).limit(1);
+
+	if (!keyRow)
+		return false;
+
+	return await db.transaction(async (tx) => {
+		const [claimedKey] = await tx.update(loginKey).set({ usedAt: now })
+			.where(
+				and(eq(loginKey.id, keyRow.id), isNull(loginKey.usedAt)),
+			).returning();
+		if (!claimedKey)
+			return false;
+
 		const [existingUser] = await tx.select().from(user).where(
 			eq(user.email, keyRow.email),
 		).limit(1);
@@ -43,13 +85,6 @@ export const load: ServerLoad = async ({ locals, url }) => {
 			eq(user.id, userRow.id),
 		);
 
-		await tx.update(loginKey).set({ usedAt: now }).where(
-			eq(loginKey.id, keyRow.id),
-		);
+		return true;
 	});
-
-	if (locals.sessionId === keyRow.sessionId)
-		throw redirect(303, resolvePath('/'));
-
-	return { verified: true };
-};
+}

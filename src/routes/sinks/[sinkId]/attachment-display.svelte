@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import type { Snippet } from 'svelte';
 	import { Button, Tile } from 'carbon-components-svelte';
 	import { Download, View } from 'carbon-icons-svelte';
 	import { alert } from '$lib/components/dialogs/generic-dialogs';
